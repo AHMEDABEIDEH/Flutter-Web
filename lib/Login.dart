@@ -1,8 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_nav/Registration.dart';
+import 'package:flutter_nav/UserPage.dart';
 import 'package:flutter_nav/bottom_bar.dart';
+import 'package:flutter_nav/home_page.dart';
 import 'package:flutter_nav/navBar.dart';
 import 'package:flutter_nav/responsive.dart';
+import 'package:flutter_nav/service/auth_service.dart';
 
 import 'menu_drawer.dart';
 
@@ -14,33 +18,23 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPage extends State<LoginPage> {
-  final List _isHovering = [
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false
-  ];
-  String myname = '';
-  String check = '';
-  bool ch = true;
-  SearchType st = SearchType.web;
-  double d = 10.5;
   bool _isObscure = true;
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  AuthService _authService = AuthService();
+
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
 
     return Scaffold(
-      backgroundColor: Color.fromARGB(81, 36, 165, 224),
+      // backgroundColor: Color.fromARGB(81, 36, 165, 224),
       appBar: ResponsiveWidget.isSmallScreen(context)
           ? AppBar(
               iconTheme: IconThemeData(color: Color(0xFF077bd7)),
-              // backgroundColor: Colors.white,
+              backgroundColor: Colors.white,
               elevation: 0,
               centerTitle: true,
               title: Text(
@@ -97,6 +91,7 @@ class _LoginPage extends State<LoginPage> {
                       margin: EdgeInsets.fromLTRB(0, 70, 0, 0),
                       width: 400,
                       child: TextFormField(
+                        controller: _emailController,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           focusedBorder: new OutlineInputBorder(
@@ -106,15 +101,14 @@ class _LoginPage extends State<LoginPage> {
                           hintText: 'Enter your email',
                           icon: Icon(Icons.email),
                         ),
-                        validator: (String? value) {
-                          if (value != null && value.isEmpty) {
-                            return "Username can't be empty";
+                        onChanged: (value) {},
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Email can't be empty";
                           }
 
                           return null;
                         },
-                        keyboardType: TextInputType.emailAddress,
-                        onChanged: (String val) => myname = val,
                       ),
                     ),
                     SizedBox(height: 10),
@@ -122,6 +116,7 @@ class _LoginPage extends State<LoginPage> {
                       margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
                       width: 400,
                       child: TextFormField(
+                        controller: _passwordController,
                         obscureText: _isObscure,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
@@ -143,16 +138,91 @@ class _LoginPage extends State<LoginPage> {
                                 });
                               }),
                         ),
-                        keyboardType: TextInputType.emailAddress,
-                        onChanged: (String val) => myname = val,
+                        onChanged: (value) {},
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Password can't be empty";
+                          }
+
+                          return null;
+                        },
                       ),
                     ),
                     SizedBox(height: 20),
+                    // Container(
+                    //   margin: EdgeInsets.fromLTRB(20, 0, 0, 0),
+                    //   child: ElevatedButton(
+                    //     onPressed: /*signIn, */ () {
+                    //       if (_formKey.currentState!.validate()) {
+                    //         _formKey.currentState?.save();
+                    //         print('Successfully saved');
+                    //         // FirebaseAuth.instance.signInWithEmailAndPassword(
+                    //         // email: emailController.text.trim(),
+                    //         //password: passwordController.text.trim(),
+                    //         //);
+                    //         //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    //         //       content: Text("Sending data to Firebase")));
+                    //       }
+                    //     },
+                    //     child: Text('Sign in'),
+                    //   ),
+                    // ),
                     Container(
-                      margin: EdgeInsets.fromLTRB(20, 0, 0, 0),
-                      child: ElevatedButton(
-                        onPressed: () {},
-                        child: Text('Sign in'),
+                      width: 140,
+                      height: 50,
+                      child: InkWell(
+                        onTap: () {
+                          _authService
+                              .signIn(_emailController.text,
+                                  _passwordController.text)
+                              .then((value) {
+                            return Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => UserPage()));
+                          });
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(vertical: 5),
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.white, width: 2),
+                              //color: colorPrimaryShade,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(30))),
+                          child: Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: Center(
+                                child: Text(
+                              "Sign in",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 15,
+                              ),
+                            )),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 40),
+                    Container(
+                      // height: 50,
+                      width: 220,
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => RegistrationPage()));
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Text(
+                              "Don't have an account? Sign up",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     SizedBox(
@@ -170,3 +240,10 @@ class _LoginPage extends State<LoginPage> {
     );
   }
 }
+//   Future signIn() async {
+//     await FirebaseAuth.instance.signInWithEmailAndPassword(
+//       email: emailController.text.trim(),
+//       password: passwordController.text.trim(),
+//     );
+//   }
+// }

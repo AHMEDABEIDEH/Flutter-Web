@@ -93,7 +93,7 @@ class _navsignupState extends State<navsignup> {
                 },
                 onTap: () {
                   Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      builder: (BuildContext context) => RegistrationPage()));
+                      builder: (BuildContext context) => LoginPage()));
                 },
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
