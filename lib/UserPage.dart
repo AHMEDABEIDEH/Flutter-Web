@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_nav/Display_Page.dart';
+
 import 'package:flutter_nav/Usernav.dart';
 import 'package:flutter_nav/bottom_bar.dart';
-import 'package:flutter_nav/display_image.dart';
+
+import 'package:flutter_nav/helperPage.dart';
 import 'package:flutter_nav/responsive.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:flutter_nav/service/firebase.dart';
-import 'package:flutter_nav/service/firebase_api.dart';
-import 'package:flutter_nav/service/model_firebase.dart';
 
 class UserPage extends StatefulWidget {
   @override
@@ -16,15 +14,6 @@ class UserPage extends StatefulWidget {
 }
 
 class _UserPage extends State<UserPage> {
-  late Future<List<FirebaseFile>> futureFiles;
-
-  @override
-  void initState() {
-    super.initState();
-
-    futureFiles = FirebaseApi.listAll('images/');
-  }
-
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
@@ -208,7 +197,7 @@ class _UserPage extends State<UserPage> {
                     child: InkWell(
                       onTap: () {
                         Navigator.of(context).pushReplacement(MaterialPageRoute(
-                            builder: (BuildContext context) => DisplayPage()));
+                            builder: (BuildContext context) => mappage()));
                       },
                       child: Container(
                         padding: EdgeInsets.symmetric(vertical: 5),
